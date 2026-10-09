@@ -8,6 +8,8 @@ import { AppointmentService } from '@core/services/appointment.service';
 import { Doctor } from '@core/models';
 import { ToastService } from '@core/services/toast.service';
 
+const DAY_NAMES = ['DOMINGO', 'LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO'] as const;
+
 @Component({
   imports: [HeaderUser, FormsModule],
   selector: 'app-book-appointment',
@@ -33,7 +35,10 @@ export class BookAppointment implements OnInit {
   protected motivo = '';
 
   // Computed
-  protected minDate = computed(() => new Date().toISOString().split('T')[0]);
+  protected readonly minDate = computed(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  });
   protected availableHours = signal<string[]>([]);
   protected isFormValid = computed(() => !!this.fecha && !!this.hora && !!this.motivo.trim());
 
@@ -53,7 +58,7 @@ export class BookAppointment implements OnInit {
       next: (d) => {
         this.doctor.set(d);
         this.loadingDoctor.set(false);
-        this.generateAvailableHours(d);
+        this.generateAvailableHours(d, this.fecha);
       },
       error: (err) => {
         this.loadingDoctor.set(false);
@@ -63,22 +68,35 @@ export class BookAppointment implements OnInit {
     });
   }
 
-  private generateAvailableHours(doctor: Doctor): void {
+  private generateAvailableHours(doctor: Doctor, fecha: string): void {
+    if (!fecha) {
+      this.availableHours.set([]);
+      return;
+    }
+
+    const [year, month, day] = fecha.split('-').map(Number);
+    const dayName = DAY_NAMES[new Date(year, month - 1, day).getDay()];
     const hours = new Set<string>();
-    doctor.horarios?.forEach((schedule) => {
-      const start = schedule.hora_inicio.slice(0, 5);
-      const end = schedule.hora_fin.slice(0, 5);
-      const [sh, sm] = start.split(':').map(Number);
-      const [eh, em] = end.split(':').map(Number);
-      for (let h = sh; h < eh; h++) {
-        hours.add(`${h.toString().padStart(2, '0')}:00:00`);
-      }
-    });
+
+    doctor.horarios
+      ?.filter((schedule) => schedule.dia === dayName)
+      .forEach((schedule) => {
+        const startHour = Number(schedule.hora_inicio.slice(0, 2));
+        const endHour = Number(schedule.hora_fin.slice(0, 2));
+        for (let h = startHour; h < endHour; h++) {
+          hours.add(`${String(h).padStart(2, '0')}:00:00`);
+        }
+      });
+
     this.availableHours.set(Array.from(hours).sort());
   }
 
   protected onDateChange(): void {
     this.hora = '';
+    const doctor = this.doctor();
+    if (doctor) {
+      this.generateAvailableHours(doctor, this.fecha);
+    }
   }
 
   protected onSubmit(): void {

@@ -101,12 +101,16 @@ export class AvailableDoctors implements OnInit {
     });
   }
 
-  protected onLocationChange(): void {
+  protected onLocationChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    this.selectedLocationId.set(value ? Number(value) : null);
     this.selectedSpecialtyId.set(null);
     this.loadDoctors();
   }
 
-  protected onSpecialtyChange(): void {
+  protected onSpecialtyChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    this.selectedSpecialtyId.set(value ? Number(value) : null);
     this.selectedLocationId.set(null);
     this.loadDoctors();
   }
@@ -147,18 +151,17 @@ export class AvailableDoctors implements OnInit {
     return price ? `Q ${price.toFixed(2)}` : 'No definida';
   }
 
-  protected getContactPhone(doctor: Doctor): string {
-    return doctor.clinica?.telefono ?? 'No disponible';
-  }
-
-  protected getContactWhatsapp(doctor: Doctor): string {
-    return doctor.clinica?.whatsapp ?? 'No disponible';
+  protected getWhatsappLink(doctor: Doctor): string {
+    const digits = (doctor.clinica?.whatsapp ?? '').replace(/\D/g, '');
+    if (!digits) return '#';
+    const withCountry = digits.startsWith('502') ? digits : `502${digits}`;
+    return `https://wa.me/${withCountry}`;
   }
 
   protected getScheduleDisplay(doctor: Doctor): { day: string; hours: string }[] {
     if (!doctor.horarios?.length) return [];
     const dayOrder = ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO', 'DOMINGO'];
-    return doctor.horarios
+    return [...doctor.horarios]
       .sort((a, b) => dayOrder.indexOf(a.dia) - dayOrder.indexOf(b.dia))
       .map((h) => ({
         day: h.dia.charAt(0) + h.dia.slice(1).toLowerCase(),

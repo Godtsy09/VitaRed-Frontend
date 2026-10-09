@@ -8,7 +8,7 @@
     <div class="filter-bar">
       <div class="filter-group">
         <label for="filter-location">Ubicación</label>
-        <select id="filter-location" [value]="selectedLocationId()" (change)="onLocationChange()" [disabled]="loadingCatalogs()">
+        <select id="filter-location" [value]="selectedLocationId()" (change)="onLocationChange($event)" [disabled]="loadingCatalogs()">
           <option value="">Todas las ubicaciones</option>
           @for (loc of locations(); track loc.id) {
             <option [value]="loc.id">{{ loc.city }}, {{ loc.department }}</option>
@@ -18,7 +18,7 @@
 
       <div class="filter-group">
         <label for="filter-specialty">Especialidad</label>
-        <select id="filter-specialty" [value]="selectedSpecialtyId()" (change)="onSpecialtyChange()" [disabled]="loadingCatalogs()">
+        <select id="filter-specialty" [value]="selectedSpecialtyId()" (change)="onSpecialtyChange($event)" [disabled]="loadingCatalogs()">
           <option value="">Todas las especialidades</option>
           @for (spec of specialties(); track spec.id_especialidad) {
             <option [value]="spec.id_especialidad">{{ spec.especialidad }}</option>
@@ -174,8 +174,8 @@
                 </a>
               }
               @if (doctor.clinica?.whatsapp) {
-                <a [href]="'https://wa.me/502' + doctor.clinica!.whatsapp.replace(/\D/g, '')" target="_blank" rel="noopener" class="contact-btn whatsapp">
-                  <i class="bi bi-whatsapp"></i> WhatsApp: +502 {{ doctor.clinica!.whatsapp }}
+                <a [href]="getWhatsappLink(doctor)" target="_blank" rel="noopener" class="contact-btn whatsapp">
+                  <i class="bi bi-whatsapp"></i> WhatsApp: {{ doctor.clinica!.whatsapp }}
                 </a>
               }
             </div>

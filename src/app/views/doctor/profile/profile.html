@@ -90,7 +90,7 @@
       </fieldset>
 
       <div class="form-actions">
-        <button type="submit" class="btn-primary" [disabled]="saving()" (click)="onSaveDoctor()">
+        <button type="submit" class="btn-primary" [disabled]="saving()">
           @if (saving()) {
             <span class="spinner"></span> Guardando...
           } @else {
@@ -189,7 +189,7 @@
       </fieldset>
 
       <div class="form-actions">
-        <button type="submit" class="btn-primary" [disabled]="saving()" (click)="onSaveClinic()">
+        <button type="submit" class="btn-primary" [disabled]="saving()">
           @if (saving()) {
             <span class="spinner"></span> Guardando...
           } @else {

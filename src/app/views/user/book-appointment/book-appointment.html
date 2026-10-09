@@ -85,7 +85,7 @@
         <!-- Acciones del Formulario -->
         <div class="form-actions">
           <button type="button" class="btn-cancel" (click)="onCancel()" [disabled]="loading()">Cancelar</button>
-          <button type="submit" class="btn-confirm" [disabled]="loading() || !isFormValid()" (click)="onSubmit()">
+          <button type="submit" class="btn-confirm" [disabled]="loading() || !isFormValid()">
             @if (loading()) {
               <span class="spinner"></span> Agendando...
             } @else {

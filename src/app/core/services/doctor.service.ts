@@ -14,13 +14,6 @@ interface DoctorFilters {
   specialtyId?: number;
 }
 
-interface PaginatedDoctors {
-  data: Doctor[];
-  total: number;
-  page: number;
-  totalPages: number;
-}
-
 @Injectable({ providedIn: 'root' })
 export class DoctorService {
   private readonly http = inject(HttpClient);
