@@ -1,0 +1,112 @@
+section.profile-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  font-family: system-ui, -apple-system, sans-serif;
+
+  .section-header {
+    margin-bottom: 2rem;
+
+    h2 {
+      margin: 0 0 0.25rem 0;
+      color: #0f172a;
+      font-size: 1.6rem;
+    }
+
+    p {
+      margin: 0;
+      color: #64748b;
+      font-size: 0.95rem;
+    }
+  }
+
+  .profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    .form-section {
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      background-color: #ffffff;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+
+      legend {
+        padding: 0 0.5rem;
+        font-weight: 700;
+        color: #0284c7;
+        font-size: 1rem;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+        margin-top: 0.5rem;
+
+        @media (max-width: 640px) {
+          grid-template-columns: 1fr;
+        }
+
+        .full-width {
+          grid-column: span 2;
+
+          @media (max-width: 640px) {
+            grid-column: span 1;
+          }
+        }
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+
+        label {
+          font-size: 0.85rem;
+          font-weight: 600;
+          color: #475569;
+        }
+
+        input,
+        select {
+          padding: 0.65rem 0.85rem;
+          border: 1px solid #cbd5e1;
+          border-radius: 8px;
+          font-size: 0.9rem;
+          color: #1e293b;
+          background-color: #f8fafc;
+          outline: none;
+          transition: border-color 0.2s, background-color 0.2s;
+
+          &:focus {
+            border-color: #0284c7;
+            background-color: #ffffff;
+          }
+        }
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+
+      .btn-save {
+        background-color: #0284c7;
+        color: #ffffff;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+          background-color: #0369a1;
+        }
+      }
+    }
+  }
+}

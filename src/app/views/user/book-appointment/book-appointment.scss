@@ -1,0 +1,233 @@
+section.book-appointment-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 1.5rem;
+  font-family: system-ui, -apple-system, sans-serif;
+
+  .appointment-card {
+    width: 100%;
+    max-width: 650px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+
+    .card-header {
+      text-align: center;
+      margin-bottom: 2rem;
+
+      h2 {
+        margin: 0 0 0.5rem 0;
+        color: #0f172a;
+        font-size: 1.75rem;
+      }
+
+      p {
+        margin: 0;
+        color: #64748b;
+        font-size: 0.9rem;
+      }
+    }
+
+    /* Tarjeta del Doctor Seleccionado */
+    .selected-doctor-card {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-bottom: 2rem;
+
+      @media (max-width: 600px) {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .doctor-avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background-color: #e0f2fe;
+        color: #0284c7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+      }
+
+      .doctor-details {
+        flex-grow: 1;
+
+        .doctor-name {
+          margin: 0 0 0.25rem 0;
+          font-size: 1.1rem;
+          color: #0f172a;
+        }
+
+        .specialty-badge {
+          display: inline-block;
+          background-color: #e0f2fe;
+          color: #0369a1;
+          font-size: 0.75rem;
+          font-weight: 600;
+          padding: 0.2rem 0.6rem;
+          border-radius: 12px;
+          margin-bottom: 0.4rem;
+        }
+
+        .clinic-name {
+          margin: 0;
+          font-size: 0.88rem;
+          font-weight: 600;
+          color: #334155;
+        }
+
+        .location-text {
+          margin: 0;
+          font-size: 0.8rem;
+          color: #64748b;
+        }
+      }
+
+      .doctor-fee-badge {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        border-left: 1px solid #cbd5e1;
+        padding-left: 1.25rem;
+
+        @media (max-width: 600px) {
+          border-left: none;
+          padding-left: 0;
+          border-top: 1px solid #cbd5e1;
+          padding-top: 0.75rem;
+          width: 100%;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .label {
+          font-size: 0.75rem;
+          color: #64748b;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+
+        .price {
+          font-size: 1.2rem;
+          font-weight: 700;
+          color: #0284c7;
+        }
+      }
+    }
+
+    /* Formulario */
+    .appointment-form {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+
+      @media (max-width: 600px) {
+        grid-template-columns: 1fr;
+      }
+
+      .full-width {
+        grid-column: span 2;
+
+        @media (max-width: 600px) {
+          grid-column: span 1;
+        }
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+
+        label {
+          font-size: 0.85rem;
+          font-weight: 600;
+          color: #475569;
+        }
+
+        input,
+        select,
+        textarea {
+          padding: 0.75rem 0.9rem;
+          border: 1px solid #cbd5e1;
+          border-radius: 8px;
+          font-size: 0.95rem;
+          color: #1e293b;
+          background-color: #f8fafc;
+          outline: none;
+          transition: border-color 0.2s, background-color 0.2s;
+
+          &:focus {
+            border-color: #0284c7;
+            background-color: #ffffff;
+          }
+        }
+
+        textarea {
+          resize: vertical;
+          font-family: inherit;
+        }
+
+        .field-hint {
+          font-size: 0.75rem;
+          color: #94a3b8;
+          text-align: right;
+        }
+      }
+
+      .form-actions {
+        grid-column: span 2;
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 1rem;
+
+        @media (max-width: 600px) {
+          grid-column: span 1;
+          flex-direction: column-reverse;
+        }
+
+        button {
+          padding: 0.8rem 1.5rem;
+          border-radius: 8px;
+          font-size: 0.95rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .btn-cancel {
+          background-color: #f1f5f9;
+          border: 1px solid #cbd5e1;
+          color: #475569;
+
+          &:hover {
+            background-color: #e2e8f0;
+          }
+        }
+
+        .btn-confirm {
+          background-color: #0284c7;
+          border: none;
+          color: #ffffff;
+
+          &:hover {
+            background-color: #0369a1;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,464 @@
+.doctors-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  font-family: system-ui, -apple-system, sans-serif;
+
+  // Hero y Buscador Unificado
+  .search-hero {
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    color: #ffffff;
+    padding: 2.5rem 2rem;
+    border-radius: 16px;
+    margin-bottom: 2.5rem;
+    box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.25);
+
+    h1 {
+      font-size: 2rem;
+      margin: 0 0 0.5rem 0;
+      font-weight: 700;
+    }
+
+    p {
+      margin: 0 0 1.5rem 0;
+      opacity: 0.9;
+      font-size: 1rem;
+    }
+
+    .filter-bar {
+      background-color: #ffffff;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+      .search-input-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+
+        .search-icon {
+          color: #64748b;
+          font-size: 1.2rem;
+        }
+
+        input {
+          width: 100%;
+          border: none;
+          outline: none;
+          font-size: 1rem;
+          color: #0f172a;
+          background: transparent;
+
+          &::placeholder {
+            color: #94a3b8;
+          }
+        }
+
+        .btn-clear-search {
+          background: none;
+          border: none;
+          font-size: 1.5rem;
+          color: #94a3b8;
+          cursor: pointer;
+          padding: 0 0.25rem;
+          line-height: 1;
+          transition: color 0.2s;
+
+          &:hover {
+            color: #475569;
+          }
+        }
+      }
+    }
+  }
+
+  // Resultados
+  .results-section {
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+
+      h2 {
+        font-size: 1.5rem;
+        color: #0f172a;
+        margin: 0;
+      }
+
+      .results-count {
+        color: #64748b;
+        font-size: 0.9rem;
+      }
+    }
+
+    .doctors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+  }
+
+  // Tarjeta del Doctor
+  .doctor-card {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.08);
+    }
+
+    .card-header {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+
+      .doctor-avatar {
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        background-color: #e0f2fe;
+        color: #0284c7;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+      }
+
+      .doctor-main-info {
+        .doctor-name {
+          font-size: 1.1rem;
+          margin: 0 0 0.25rem 0;
+          color: #0f172a;
+        }
+
+        .specialty-badge {
+          display: inline-block;
+          background-color: #f0f9ff;
+          color: #0284c7;
+          font-size: 0.75rem;
+          font-weight: 600;
+          padding: 0.2rem 0.5rem;
+          border-radius: 6px;
+          margin-bottom: 0.25rem;
+        }
+
+        .colegiado-text {
+          margin: 0;
+          font-size: 0.75rem;
+          color: #64748b;
+        }
+      }
+    }
+
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding: 0.75rem 0;
+      border-top: 1px solid #f1f5f9;
+      border-bottom: 1px solid #f1f5f9;
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.875rem;
+
+        .label {
+          color: #64748b;
+        }
+
+        .value {
+          color: #1e293b;
+          font-weight: 500;
+          text-align: right;
+
+          &.price {
+            color: #16a34a;
+            font-weight: 700;
+            font-size: 1rem;
+          }
+        }
+      }
+    }
+
+    .card-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+
+      button {
+        padding: 0.65rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        cursor: pointer;
+        border: none;
+        transition: background-color 0.2s, opacity 0.2s;
+
+        &:hover {
+          opacity: 0.9;
+        }
+      }
+
+      .btn-details {
+        background-color: #f1f5f9;
+        color: #334155;
+        border: 1px solid #cbd5e1;
+
+        &:hover {
+          background-color: #e2e8f0;
+        }
+      }
+
+      .btn-book {
+        background-color: #0284c7;
+        color: #ffffff;
+      }
+    }
+  }
+
+  // Estilos de la Modal de Detalles
+  .modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+
+    .modal-card {
+      background-color: #ffffff;
+      width: 100%;
+      max-width: 550px;
+      border-radius: 16px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      animation: modalFadeIn 0.25s ease-out;
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 1.5rem;
+        border-bottom: 1px solid #f1f5f9;
+
+        .doctor-summary {
+          display: flex;
+          gap: 1rem;
+          align-items: center;
+
+          .modal-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #e0f2fe;
+            color: #0284c7;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          h3 {
+            margin: 0 0 0.25rem 0;
+            color: #0f172a;
+            font-size: 1.2rem;
+          }
+
+          .specialty-badge {
+            background-color: #f0f9ff;
+            color: #0284c7;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+          }
+
+          .colegiado-text {
+            margin: 0.25rem 0 0 0;
+            font-size: 0.8rem;
+            color: #64748b;
+          }
+        }
+
+        .btn-close-modal {
+          background: none;
+          border: none;
+          font-size: 1.75rem;
+          color: #94a3b8;
+          cursor: pointer;
+          line-height: 1;
+
+          &:hover {
+            color: #0f172a;
+          }
+        }
+      }
+
+      .modal-body {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        max-height: 70vh;
+        overflow-y: auto;
+
+        .detail-section {
+          h4 {
+            margin: 0 0 0.75rem 0;
+            font-size: 0.95rem;
+            color: #0f172a;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 0.4rem;
+          }
+
+          .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.75rem;
+
+            .detail-item {
+              display: flex;
+              flex-direction: column;
+              font-size: 0.875rem;
+
+              .item-label {
+                color: #64748b;
+                font-size: 0.75rem;
+              }
+
+              .item-value {
+                color: #1e293b;
+                font-weight: 600;
+
+                &.price {
+                  color: #16a34a;
+                  font-size: 1.05rem;
+                }
+              }
+            }
+          }
+
+          .contact-buttons-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+
+            .contact-btn {
+              display: inline-flex;
+              align-items: center;
+              gap: 0.5rem;
+              padding: 0.65rem 1rem;
+              border-radius: 8px;
+              text-decoration: none;
+              font-size: 0.875rem;
+              font-weight: 600;
+              transition: opacity 0.2s;
+
+              &:hover {
+                opacity: 0.9;
+              }
+
+              &.phone {
+                background-color: #f1f5f9;
+                color: #0f172a;
+                border: 1px solid #cbd5e1;
+              }
+
+              &.whatsapp {
+                background-color: #25d366;
+                color: #ffffff;
+              }
+            }
+          }
+
+          .schedule-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+
+            li {
+              display: flex;
+              justify-content: space-between;
+              font-size: 0.875rem;
+              color: #334155;
+
+              span {
+                font-weight: 600;
+                color: #64748b;
+              }
+            }
+          }
+        }
+      }
+
+      .modal-footer {
+        padding: 1rem 1.5rem;
+        background-color: #f8fafc;
+        border-top: 1px solid #f1f5f9;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+
+        button {
+          padding: 0.65rem 1.25rem;
+          border-radius: 8px;
+          font-weight: 600;
+          font-size: 0.875rem;
+          cursor: pointer;
+          border: none;
+        }
+
+        .btn-secondary {
+          background-color: #e2e8f0;
+          color: #475569;
+
+          &:hover {
+            background-color: #cbd5e1;
+          }
+        }
+
+        .btn-book {
+          background-color: #0284c7;
+          color: #ffffff;
+
+          &:hover {
+            background-color: #0369a1;
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
