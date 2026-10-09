@@ -1,0 +1,57 @@
+<app-header-user></app-header-user>
+<section class="appointments-container">
+  <header class="section-header">
+    <h2>Mis Citas Médicas</h2>
+    <p>Historial y estado de tus consultas programadas</p>
+  </header>
+
+  @if (error()) {
+    <div class="alert alert-error" role="alert">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+    <div class="loading-state">Cargando tus citas...</div>
+  } @else if (appointments().length === 0) {
+    <div class="empty-state">
+      <p>No tienes citas programadas</p>
+      <a routerLink="/availableDoctors" class="btn-primary">Buscar médicos</a>
+    </div>
+  } @else {
+    <div class="table-responsive">
+      <table class="appointments-table">
+        <thead>
+          <tr>
+            <th>Médico / Especialidad</th>
+            <th>Clínica</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (appt of appointments(); track appt.id_cita) {
+            <tr>
+              <td class="doctor-info">
+                <div class="doctor-avatar-small">
+                  <span>{{ getDoctorInitials(appt.doctor) }}</span>
+                </div>
+                <div>
+                  <strong>Dr. {{ appt.doctor?.usuario?.nombre }} {{ appt.doctor?.usuario?.apellido }}</strong>
+                  <span class="specialty">{{ appt.doctor?.especialidad?.especialidad }}</span>
+                </div>
+              </td>
+              <td>{{ appt.doctor?.clinica?.nombre }}</td>
+              <td>{{ formatDate(appt.fecha_hora_inicio) }}</td>
+              <td class="time-cell">{{ formatTime(appt.fecha_hora_inicio) }}</td>
+              <td>
+                <span class="badge" [class]="getStatusClass(appt.estado)">
+                  {{ getStatusLabel(appt.estado) }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

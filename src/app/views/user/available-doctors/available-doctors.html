@@ -1,0 +1,206 @@
+<app-header-user></app-header-user>
+<div class="doctors-container">
+  <!-- Sección Hero / Encabezado de búsqueda -->
+  <section class="search-hero">
+    <p>Busca por especialidad, nombre, departamento, ciudad o zona en un solo lugar</p>
+
+    <!-- Filtros: Ubicación XOR Especialidad -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label for="filter-location">Ubicación</label>
+        <select id="filter-location" [value]="selectedLocationId()" (change)="onLocationChange()" [disabled]="loadingCatalogs()">
+          <option value="">Todas las ubicaciones</option>
+          @for (loc of locations(); track loc.id) {
+            <option [value]="loc.id">{{ loc.city }}, {{ loc.department }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="filter-specialty">Especialidad</label>
+        <select id="filter-specialty" [value]="selectedSpecialtyId()" (change)="onSpecialtyChange()" [disabled]="loadingCatalogs()">
+          <option value="">Todas las especialidades</option>
+          @for (spec of specialties(); track spec.id_especialidad) {
+            <option [value]="spec.id_especialidad">{{ spec.especialidad }}</option>
+          }
+        </select>
+      </div>
+
+      @if (hasActiveFilter()) {
+        <button type="button" class="btn-clear-filters" (click)="clearFilters()" aria-label="Limpiar filtros">
+          Limpiar filtros
+        </button>
+      }
+    </div>
+
+    <!-- Barra de Búsqueda Global -->
+    <div class="search-input-wrapper">
+      <i class="bi bi-search search-icon"></i>
+      <input
+        id="global-search"
+        type="text"
+        placeholder="Buscar por nombre, clínica, ciudad..."
+        [value]="searchTerm()"
+        (input)="searchTerm.set($any($event.target).value)"
+        autocomplete="off"
+        [disabled]="loadingDoctors()"
+      />
+      @if (searchTerm()) {
+        <button type="button" class="btn-clear-search" (click)="searchTerm.set('')" aria-label="Limpiar búsqueda">&times;</button>
+      }
+    </div>
+  </section>
+
+  <!-- Lista de Resultados de Doctores -->
+  <section class="results-section">
+    <div class="results-header">
+      <h2>Médicos Disponibles</h2>
+      <span class="results-count">
+        @if (loadingDoctors()) {
+          Cargando...
+        } @else {
+          {{ filteredDoctors().length }} médico{{ filteredDoctors().length !== 1 ? 's' : '' }} encontrado{{ filteredDoctors().length !== 1 ? 's' : '' }}
+        }
+      </span>
+    </div>
+
+    @if (error()) {
+      <div class="alert alert-error" role="alert">{{ error() }}</div>
+    }
+
+    <!-- Grid de Tarjetas de Doctores -->
+    @if (!loadingDoctors() && filteredDoctors().length === 0) {
+      <div class="empty-state">
+        <p>No se encontraron médicos con los criterios actuales</p>
+        <button type="button" class="btn-secondary" (click)="clearFilters()">Limpiar filtros</button>
+      </div>
+    } @else {
+      <div class="doctors-grid">
+        @for (doctor of filteredDoctors(); track doctor.id_doctor) {
+          <article class="doctor-card">
+            <div class="card-header">
+              <div class="doctor-avatar">
+                <span>{{ getDoctorInitials(doctor) }}</span>
+              </div>
+              <div class="doctor-main-info">
+                <h3 class="doctor-name">Dr. {{ doctor.usuario?.nombre }} {{ doctor.usuario?.apellido }}</h3>
+                <span class="specialty-badge">{{ doctor.especialidad?.especialidad }}</span>
+                @if (doctor.numero_colegiado) {
+                  <p class="colegiado-text">Colegiado: {{ doctor.numero_colegiado }}</p>
+                }
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="info-row">
+                <span class="label">Clínica:</span>
+                <span class="value">{{ doctor.clinica?.nombre }}</span>
+              </div>
+              <div class="info-row">
+                <span class="label">Ubicación:</span>
+                <span class="value">{{ doctor.clinica?.city }}, {{ doctor.clinica?.department }}</span>
+              </div>
+              <div class="info-row">
+                <span class="label">Dirección:</span>
+                <span class="value">{{ doctor.clinica?.direccion }}</span>
+              </div>
+              <div class="info-row highlight">
+                <span class="label">Consulta:</span>
+                <span class="value price">{{ formatPrice(doctor.tarifa_consulta) }}</span>
+              </div>
+            </div>
+
+            <div class="card-actions">
+              <button type="button" class="btn-details" (click)="openModal(doctor)">Ver Detalles</button>
+              <button type="button" class="btn-book" (click)="bookAppointment(doctor)">Agendar Cita</button>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </section>
+
+  <!-- Ventana Modal de Detalles del Doctor -->
+  @if (isModalOpen() && selectedDoctor(); as doctor) {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal-card" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div class="doctor-summary">
+            <div class="modal-avatar">
+              <span>{{ getDoctorInitials(doctor) }}</span>
+            </div>
+            <div>
+              <h3>Dr. {{ doctor.usuario?.nombre }} {{ doctor.usuario?.apellido }}</h3>
+              <span class="specialty-badge">{{ doctor.especialidad?.especialidad }}</span>
+              @if (doctor.numero_colegiado) {
+                <p class="colegiado-text">Colegiado N° {{ doctor.numero_colegiado }}</p>
+              }
+            </div>
+          </div>
+          <button type="button" class="btn-close-modal" aria-label="Cerrar modal" (click)="closeModal()">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Información Profesional & Clínica -->
+          <section class="detail-section">
+            <h4>Información de la Clínica</h4>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="item-label">Nombre Clínica:</span>
+                <span class="item-value">{{ doctor.clinica?.nombre }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="item-label">Ubicación:</span>
+                <span class="item-value">{{ doctor.clinica?.city }}, {{ doctor.clinica?.department }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="item-label">Zona & Dirección:</span>
+                <span class="item-value">Zona {{ doctor.clinica?.zona }}, {{ doctor.clinica?.direccion }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="item-label">Precio Consulta:</span>
+                <span class="item-value price">{{ formatPrice(doctor.tarifa_consulta) }}</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Canales de Contacto Directo -->
+          <section class="detail-section">
+            <h4>Contacto Directo</h4>
+            <div class="contact-buttons-container">
+              @if (doctor.clinica?.telefono) {
+                <a [href]="'tel:' + doctor.clinica!.telefono" class="contact-btn phone">
+                  <i class="bi bi-telephone"></i> Teléfono: {{ doctor.clinica!.telefono }}
+                </a>
+              }
+              @if (doctor.clinica?.whatsapp) {
+                <a [href]="'https://wa.me/502' + doctor.clinica!.whatsapp.replace(/\D/g, '')" target="_blank" rel="noopener" class="contact-btn whatsapp">
+                  <i class="bi bi-whatsapp"></i> WhatsApp: +502 {{ doctor.clinica!.whatsapp }}
+                </a>
+              }
+            </div>
+          </section>
+
+          <!-- Horarios de Atención -->
+          <section class="detail-section">
+            <h4>Horario de Atención</h4>
+            @if (getScheduleDisplay(doctor).length > 0) {
+              <ul class="schedule-list">
+                @for (s of getScheduleDisplay(doctor); track s.day) {
+                  <li><span>{{ s.day }}:</span> {{ s.hours }}</li>
+                }
+              </ul>
+            } @else {
+              <p class="no-schedule">Horario no disponible</p>
+            }
+          </section>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" (click)="closeModal()">Cerrar</button>
+          <button type="button" class="btn-book" (click)="bookAppointment(doctor)">Agendar Cita Ahora</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

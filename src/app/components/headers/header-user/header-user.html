@@ -1,0 +1,34 @@
+<header class="header">
+  <div class="header-container">
+    <!-- Marca VitaRed -->
+    <a routerLink="/availableDoctors" class="brand">VitaRed</a>
+
+    <!-- Navegación Central -->
+    <nav class="nav-center" aria-label="Navegación de paciente">
+      <a routerLink="/availableDoctors" routerLinkActive="active" class="nav-link">Médicos disponibles</a>
+      <a routerLink="/myAppointments" routerLinkActive="active" class="nav-link">Mis citas</a>
+    </nav>
+
+    <!-- Perfil del Usuario / Paciente -->
+    <div class="profile">
+      <span class="user-name">{{ userName() }}</span>
+
+      <div class="avatar-menu">
+        <button
+          class="avatar"
+          type="button"
+          aria-label="Menú de usuario"
+          (click)="$event.stopPropagation()"
+        >
+          {{ getInitials() }}
+        </button>
+
+        <!-- Menú Desplegable (Visual) -->
+        <div class="avatar-dropdown" role="menu">
+          <button class="avatar-dropdown-item" type="button" role="menuitem" routerLink="/availableDoctors">Volver a búsqueda</button>
+          <button class="avatar-dropdown-item danger" type="button" role="menuitem" (click)="onLogout()">Cerrar sesión</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

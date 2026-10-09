@@ -1,0 +1,99 @@
+<app-header-user></app-header-user>
+<section class="book-appointment-container">
+  <div class="appointment-card">
+    <header class="card-header">
+      <h2>Agendar una Cita Médica</h2>
+      <p>Confirma el horario y motivo de tu consulta con el médico seleccionado</p>
+    </header>
+
+    @if (error()) {
+      <div class="alert alert-error" role="alert">{{ error() }}</div>
+    }
+
+    @if (loadingDoctor()) {
+      <div class="loading-state">Cargando información del médico...</div>
+    } @else if (doctor(); as doc) {
+      <!-- Ficha informativa del Doctor Seleccionado -->
+      <div class="selected-doctor-card">
+        <div class="doctor-avatar">
+          <span>{{ getDoctorInitials(doc) }}</span>
+        </div>
+        <div class="doctor-details">
+          <h3 class="doctor-name">Dr. {{ doc.usuario?.nombre }} {{ doc.usuario?.apellido }}</h3>
+          <span class="specialty-badge">{{ doc.especialidad?.especialidad }}</span>
+          <p class="clinic-name">{{ doc.clinica?.nombre }}</p>
+          <p class="location-text">{{ doc.clinica?.city }}, {{ doc.clinica?.department }} ({{ doc.clinica?.direccion }})</p>
+        </div>
+        <div class="doctor-fee-badge">
+          <span class="label">Consulta</span>
+          <span class="price">{{ formatPrice(doc.tarifa_consulta) }}</span>
+        </div>
+      </div>
+
+      <!-- Formulario de Agendamiento -->
+      <form class="appointment-form" (ngSubmit)="onSubmit()" novalidate>
+        <!-- Fecha de la Cita -->
+        <div class="form-group">
+          <label for="fecha">Fecha de la Cita</label>
+          <input
+            type="date"
+            id="fecha"
+            required
+            [(ngModel)]="fecha"
+            name="fecha"
+            [min]="minDate()"
+            [disabled]="loading()"
+          />
+        </div>
+
+        <!-- Hora de la Cita (Horas exactas para cumplir con DB constraint) -->
+        <div class="form-group">
+          <label for="hora">Hora disponible (Horas exactas)</label>
+          <select
+            id="hora"
+            required
+            [(ngModel)]="hora"
+            name="hora"
+            [disabled]="loading() || availableHours().length === 0"
+          >
+            <option value="" disabled selected>Selecciona hora</option>
+            @for (h of availableHours(); track h) {
+              <option [value]="h">{{ formatTimeDisplay(h) }}</option>
+            }
+          </select>
+          @if (availableHours().length === 0) {
+            <span class="field-hint">No hay horarios disponibles para este médico</span>
+          }
+        </div>
+
+        <!-- Motivo de la Cita -->
+        <div class="form-group full-width">
+          <label for="motivo">Motivo de la Consulta</label>
+          <textarea
+            id="motivo"
+            rows="3"
+            placeholder="Describe brevemente el motivo de tu consulta (ej. Chequeo general, dolor articular...)"
+            maxlength="255"
+            required
+            [(ngModel)]="motivo"
+            name="motivo"
+            [disabled]="loading()"
+          ></textarea>
+          <span class="field-hint">Máximo 255 caracteres ({{ motivo.length }}/255)</span>
+        </div>
+
+        <!-- Acciones del Formulario -->
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" (click)="onCancel()" [disabled]="loading()">Cancelar</button>
+          <button type="submit" class="btn-confirm" [disabled]="loading() || !isFormValid()" (click)="onSubmit()">
+            @if (loading()) {
+              <span class="spinner"></span> Agendando...
+            } @else {
+              Confirmar Cita
+            }
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</section>

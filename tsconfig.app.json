@@ -5,7 +5,14 @@
   "compilerOptions": {
     "types": [
       "node"
-    ]
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@core/*": ["src/app/core/*"],
+      "@components/*": ["src/app/components/*"],
+      "@views/*": ["src/app/views/*"]
+    },
+    "ignoreDeprecations": "6.0"
   },
   "include": [
     "src/**/*.ts"

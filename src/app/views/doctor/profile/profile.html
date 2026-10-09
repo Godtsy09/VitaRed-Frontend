@@ -1,0 +1,202 @@
+<app-header-doctor></app-header-doctor>
+<section class="profile-container">
+  <header class="section-header">
+    <h2>Perfil Profesional y Clínica</h2>
+    <p>Ajustes de información personal, datos médicos y consultorio</p>
+  </header>
+
+  @if (error()) {
+    <div class="alert alert-error" role="alert">{{ error() }}</div>
+  }
+  @if (success()) {
+    <div class="alert alert-success" role="alert">Cambios guardados correctamente</div>
+  }
+
+  @if (loading()) {
+    <div class="loading-state">Cargando perfil...</div>
+  } @else if (doctor(); as doc) {
+    <!-- Sección 1: Información Personal (Solo lectura - viene de auth) -->
+    <fieldset class="form-section">
+      <legend>Información Personal</legend>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" [value]="doc.usuario?.nombre" readonly />
+        </div>
+
+        <div class="form-group">
+          <label for="apellido">Apellido</label>
+          <input type="text" id="apellido" [value]="doc.usuario?.apellido" readonly />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Correo Electrónico</label>
+          <input type="email" id="email" [value]="doc.usuario?.email" readonly />
+        </div>
+
+        <div class="form-group">
+          <label for="fecha_nacimiento">Fecha de Nacimiento</label>
+          <input type="date" id="fecha_nacimiento" [value]="doc.usuario?.fecha_nacimiento" readonly />
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- Sección 2: Información Profesional (Tabla doctor y especialidad) -->
+    <form class="profile-form" (ngSubmit)="onSaveDoctor()" novalidate>
+      <fieldset class="form-section">
+        <legend>Datos Médicos y Profesionales</legend>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="numero_colegiado">Número de Colegiado</label>
+            <input
+              type="text"
+              id="numero_colegiado"
+              [(ngModel)]="numero_colegiado"
+              name="numero_colegiado"
+              placeholder="Ej. COL-12345"
+              maxlength="50"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="especialidad">Especialidad</label>
+            <select
+              id="especialidad"
+              [(ngModel)]="id_especialidad"
+              name="id_especialidad"
+              [disabled]="loadingCatalogs()"
+              required
+            >
+              <option value="" disabled>Selecciona especialidad</option>
+              @for (s of specialties(); track s.id_especialidad) {
+                <option [value]="s.id_especialidad">{{ s.especialidad }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="tarifa_consulta">Tarifa por Consulta (Q)</label>
+            <input
+              type="number"
+              id="tarifa_consulta"
+              step="0.01"
+              min="0"
+              placeholder="0.00"
+              [(ngModel)]="tarifa_consulta"
+              name="tarifa_consulta"
+            />
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary" [disabled]="saving()" (click)="onSaveDoctor()">
+          @if (saving()) {
+            <span class="spinner"></span> Guardando...
+          } @else {
+            Guardar Datos Profesionales
+          }
+        </button>
+      </div>
+    </form>
+
+    <!-- Sección 3: Datos de la Clínica (Tabla clinica y locations) -->
+    <form class="profile-form" (ngSubmit)="onSaveClinic()" novalidate ngSkipHydration>
+      <fieldset class="form-section">
+        <legend>Información de la Clínica / Consultorio</legend>
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="nombre_clinica">Nombre de la Clínica</label>
+            <input
+              type="text"
+              id="nombre_clinica"
+              [(ngModel)]="clinicNombre"
+              name="clinicNombre"
+              placeholder="Nombre de tu clínica"
+              required
+              maxlength="200"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="location">Ubicación (Ciudad / Departamento)</label>
+            <select
+              id="location"
+              [(ngModel)]="clinicLocationId"
+              name="clinicLocationId"
+              [disabled]="loadingCatalogs()"
+              required
+            >
+              <option value="" disabled>Selecciona ubicación</option>
+              @for (l of locations(); track l.id) {
+                <option [value]="l.id">{{ l.city }}, {{ l.department }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="zona">Zona</label>
+            <input
+              type="number"
+              id="zona"
+              [(ngModel)]="clinicZona"
+              name="clinicZona"
+              placeholder="Ej. 10"
+              min="1"
+              required
+            />
+          </div>
+
+          <div class="form-group full-width">
+            <label for="direccion">Dirección Exacta</label>
+            <input
+              type="text"
+              id="direccion"
+              [(ngModel)]="clinicDireccion"
+              name="clinicDireccion"
+              placeholder="Calle, número, oficina"
+              required
+              maxlength="255"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="telefono">Teléfono Fijo</label>
+            <input
+              type="tel"
+              id="telefono"
+              [(ngModel)]="clinicTelefono"
+              name="clinicTelefono"
+              placeholder="Ej. 22334455"
+              maxlength="20"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="whatsapp">WhatsApp de Contacto</label>
+            <input
+              type="tel"
+              id="whatsapp"
+              [(ngModel)]="clinicWhatsapp"
+              name="clinicWhatsapp"
+              placeholder="Ej. 55667788"
+              required
+              maxlength="20"
+              pattern="[0-9]{8,}"
+            />
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary" [disabled]="saving()" (click)="onSaveClinic()">
+          @if (saving()) {
+            <span class="spinner"></span> Guardando...
+          } @else {
+            Guardar Datos de Clínica
+          }
+        </button>
+      </div>
+    </form>
+  }
+</section>

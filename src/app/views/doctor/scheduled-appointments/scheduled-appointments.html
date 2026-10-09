@@ -1,0 +1,77 @@
+<app-header-doctor></app-header-doctor>
+<section class="scheduled-appointments-container">
+  <header class="section-header">
+    <h2>Gestión de Citas Agendadas</h2>
+    <p>Administra tus consultas y actualiza el estado de cada paciente</p>
+  </header>
+
+  @if (error()) {
+    <div class="alert alert-error" role="alert">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+    <div class="loading-state">Cargando citas...</div>
+  } @else if (appointments().length === 0) {
+    <div class="empty-state">
+      <p>No tienes citas programadas</p>
+    </div>
+  } @else {
+    <div class="table-responsive">
+      <table class="appointments-table">
+        <thead>
+          <tr>
+            <th>Paciente</th>
+            <th>Motivo / Observación</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Estado Actual</th>
+            <th>Cambiar Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (appt of appointments(); track appt.id_cita) {
+            <tr>
+              <td class="patient-info">
+                <div class="patient-avatar">
+                  <span>{{ getPatientInitials(appt.paciente) }}</span>
+                </div>
+                <div>
+                  <strong>{{ appt.paciente?.nombre }} {{ appt.paciente?.apellido }}</strong>
+                  @if (appt.paciente?.email) {
+                    <span class="patient-email">{{ appt.paciente?.email }}</span>
+                  }
+                </div>
+              </td>
+              <td>{{ appt.motivo ?? 'Sin motivo especificado' }}</td>
+              <td>{{ formatDate(appt.fecha_hora_inicio) }}</td>
+              <td class="time-cell">{{ formatTime(appt.fecha_hora_inicio) }}</td>
+              <td>
+                <span class="badge" [class]="getStatusClass(appt.estado)">
+                  {{ getStatusLabel(appt.estado) }}
+                </span>
+              </td>
+              <td>
+                @if (appt.estado === 'PROGRAMADA') {
+                  <select
+                    class="status-select"
+                    [class]="getStatusClass(appt.estado)"
+                    [value]="appt.estado"
+                    (change)="updateStatus(appt.id_cita, $event)"
+                    [disabled]="isUpdating(appt.id_cita)"
+                  >
+                    <option value="" disabled selected>Seleccionar...</option>
+                    @for (opt of getStatusOptions(appt.estado); track opt.value) {
+                      <option [value]="opt.value">{{ opt.label }}</option>
+                    }
+                  </select>
+                } @else {
+                  <span class="status-final">Estado final</span>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
