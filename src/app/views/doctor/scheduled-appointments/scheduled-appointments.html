@@ -52,18 +52,24 @@
               </td>
               <td>
                 @if (appt.estado === 'PROGRAMADA') {
-                  <select
-                    class="status-select"
-                    [class]="getStatusClass(appt.estado)"
-                    [value]="appt.estado"
-                    (change)="updateStatus(appt.id_cita, $event)"
-                    [disabled]="isUpdating(appt.id_cita)"
-                  >
-                    <option value="" disabled selected>Seleccionar...</option>
-                    @for (opt of getStatusOptions(appt.estado); track opt.value) {
-                      <option [value]="opt.value">{{ opt.label }}</option>
-                    }
-                  </select>
+                  <div class="status-actions">
+                    <button
+                      type="button"
+                      class="action-btn btn-attend"
+                      (click)="updateStatus(appt.id_cita, 'ATENDIDA')"
+                      [disabled]="isUpdating(appt.id_cita)"
+                    >
+                      <i class="bi bi-check-lg"></i> Atender
+                    </button>
+                    <button
+                      type="button"
+                      class="action-btn btn-cancel"
+                      (click)="updateStatus(appt.id_cita, 'CANCELADA')"
+                      [disabled]="isUpdating(appt.id_cita)"
+                    >
+                      <i class="bi bi-x-lg"></i> Cancelar
+                    </button>
+                  </div>
                 } @else {
                   <span class="status-final">Estado final</span>
                 }

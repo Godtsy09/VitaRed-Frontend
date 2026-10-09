@@ -129,6 +129,14 @@ section.register-container {
               background-color: #ffffff;
             }
           }
+
+          .field-error {
+            display: block;
+            margin-top: 0.35rem;
+            color: #dc2626;
+            font-size: 0.78rem;
+            font-weight: 500;
+          }
         }
       }
 

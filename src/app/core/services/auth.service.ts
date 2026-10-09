@@ -11,6 +11,7 @@ import {
   RegisterDoctorPayload,
   UserRole,
 } from '../models';
+import { getInitials } from '../utils/initials';
 
 const TOKEN_KEY = 'vitared_token';
 const USER_KEY = 'vitared_user';
@@ -36,13 +37,8 @@ export class AuthService {
     return u ? `${u.nombre} ${u.apellido}` : '';
   });
   readonly initials = computed(() => {
-    const name = this.userSignal()?.nombre ?? '';
-    return name
-      .split(' ')
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((parte) => parte.charAt(0).toUpperCase())
-      .join('');
+    const user = this.userSignal();
+    return getInitials(user?.nombre, user?.apellido);
   });
 
   initializeAuth(): void {

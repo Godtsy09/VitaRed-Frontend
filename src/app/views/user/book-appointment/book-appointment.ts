@@ -7,6 +7,7 @@ import { DoctorService } from '@core/services/doctor.service';
 import { AppointmentService } from '@core/services/appointment.service';
 import { Doctor } from '@core/models';
 import { ToastService } from '@core/services/toast.service';
+import { getInitials } from '@core/utils/initials';
 
 const DAY_NAMES = ['DOMINGO', 'LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO'] as const;
 
@@ -40,7 +41,7 @@ export class BookAppointment implements OnInit {
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
   });
   protected availableHours = signal<string[]>([]);
-  protected isFormValid = computed(() => !!this.fecha && !!this.hora && !!this.motivo.trim());
+  protected fieldErrors = signal<Record<string, string>>({});
 
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
@@ -99,9 +100,40 @@ export class BookAppointment implements OnInit {
     }
   }
 
+  protected clearFieldError(field: string): void {
+    this.fieldErrors.update((current) => {
+      if (!current[field]) return current;
+      const next = { ...current };
+      delete next[field];
+      return next;
+    });
+  }
+
+  protected validateFields(): boolean {
+    const errors: Record<string, string> = {};
+
+    if (!this.fecha) {
+      errors['fecha'] = 'La fecha de la cita es obligatoria';
+    } else if (this.fecha < this.minDate()) {
+      errors['fecha'] = 'La fecha de la cita no puede ser anterior a hoy';
+    }
+    if (!this.hora) {
+      errors['hora'] = 'La hora de la cita es obligatoria';
+    }
+    if (!this.motivo?.trim()) {
+      errors['motivo'] = 'El motivo de la consulta es obligatorio';
+    } else if (this.motivo.trim().length > 255) {
+      errors['motivo'] = 'El motivo no puede superar los 255 caracteres';
+    }
+
+    this.fieldErrors.set(errors);
+    return Object.keys(errors).length === 0;
+  }
+
   protected onSubmit(): void {
-    if (this.loading() || !this.isFormValid()) return;
+    if (this.loading()) return;
     if (!this.doctor()) return;
+    if (!this.validateFields()) return;
 
     this.loading.set(true);
     this.error.set(null);
@@ -120,8 +152,30 @@ export class BookAppointment implements OnInit {
       },
       error: (err) => {
         this.loading.set(false);
-        this.error.set(err?.error?.error ?? 'Error al agendar cita');
-        this.toastr.error(err?.error?.error ?? 'No se pudo agendar la cita');
+        this.fieldErrors.set({});
+        const details = err?.error?.details as Record<string, string[]> | undefined;
+        const message = err?.error?.error ?? 'Error al agendar cita';
+
+        if (details && Object.keys(details).length > 0) {
+          const mapped: Record<string, string> = {};
+          for (const [key, messages] of Object.entries(details)) {
+            const field = key === 'fecha_hora_inicio' ? 'fecha' : key;
+            const value = Array.isArray(messages) ? (messages[0] ?? '') : String(messages ?? '');
+            if (value) mapped[field] = value;
+          }
+          this.fieldErrors.set(mapped);
+          this.toastr.error('Revisa los campos marcados en el formulario');
+          return;
+        }
+
+        if (message === 'El horario no está disponible') {
+          this.fieldErrors.set({ hora: message });
+        } else if (message === 'La fecha y hora de la cita deben ser posteriores a ahora') {
+          this.fieldErrors.set({ fecha: message });
+        } else {
+          this.error.set(message);
+        }
+        this.toastr.error(message);
       },
     });
   }
@@ -131,17 +185,12 @@ export class BookAppointment implements OnInit {
   }
 
   protected getDoctorInitials(doctor: Doctor): string {
-    const name = doctor.usuario?.nombre ?? '';
-    return name
-      .split(' ')
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((p) => p.charAt(0).toUpperCase())
-      .join('');
+    return getInitials(doctor.usuario?.nombre, doctor.usuario?.apellido);
   }
 
-  protected formatPrice(price: number | null): string {
-    return price ? `Q ${price.toFixed(2)}` : 'No definida';
+  protected formatPrice(price: number | string | null): string {
+    const value = typeof price === 'string' ? Number(price) : price;
+    return value !== null && !Number.isNaN(value) ? `Q ${value.toFixed(2)}` : 'No definida';
   }
 
   protected formatTimeDisplay(time: string): string {

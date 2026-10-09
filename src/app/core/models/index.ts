@@ -30,11 +30,11 @@ export interface RegisterDoctorPayload extends RegisterUserPayload {
   clinicLocationId: number;
   clinicZona: number;
   clinicDireccion: string;
-  clinicTelefono?: string;
+  clinicTelefono: string;
   clinicWhatsapp: string;
   id_especialidad: number;
-  numero_colegiado?: string;
-  tarifa_consulta?: number;
+  numero_colegiado: string;
+  tarifa_consulta: number;
 }
 
 export interface Location {

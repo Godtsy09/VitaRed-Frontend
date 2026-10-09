@@ -5,6 +5,7 @@ import { HeaderDoctor } from '@components/headers/header-doctor/header-doctor';
 import { AppointmentService } from '@core/services/appointment.service';
 import { Appointment } from '@core/models';
 import { ToastService } from '@core/services/toast.service';
+import { getInitials } from '@core/utils/initials';
 
 @Component({
   imports: [HeaderDoctor, FormsModule],
@@ -43,11 +44,13 @@ export class ScheduledAppointments implements OnInit {
     });
   }
 
-  protected updateStatus(appointmentId: number, event: Event): void {
-    const select = event.target as HTMLSelectElement;
-    const newStatus = select.value as 'CANCELADA' | 'ATENDIDA';
+  protected updateStatus(appointmentId: number, newStatus: 'CANCELADA' | 'ATENDIDA'): void {
+    if (this.updating()[appointmentId]) return;
 
-    if (!newStatus || this.updating()[appointmentId]) return;
+    if (newStatus === 'CANCELADA') {
+      const confirmed = window.confirm('¿Seguro que deseas cancelar esta cita?');
+      if (!confirmed) return;
+    }
 
     this.updating.update((u) => ({ ...u, [appointmentId]: true }));
 
@@ -109,24 +112,10 @@ export class ScheduledAppointments implements OnInit {
     }
   }
 
-  protected getStatusOptions(current: string): { value: 'CANCELADA' | 'ATENDIDA'; label: string }[] {
-    if (current === 'PROGRAMADA') {
-      return [
-        { value: 'CANCELADA', label: 'Cancelada' },
-        { value: 'ATENDIDA', label: 'Atendida' },
-      ];
-    }
-    return [];
-  }
+  
 
   protected getPatientInitials(patient?: Appointment['paciente']): string {
-    const name = patient?.nombre ?? '';
-    return name
-      .split(' ')
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((p) => p.charAt(0).toUpperCase())
-      .join('');
+    return getInitials(patient?.nombre, patient?.apellido);
   }
 
   protected isUpdating(appointmentId: number): boolean {

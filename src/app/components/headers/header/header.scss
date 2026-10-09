@@ -27,7 +27,8 @@ header.header {
       }
     }
 
-    .nav {
+    .nav,
+    .nav-public {
       display: flex;
       align-items: center;
       gap: 1.5rem;
@@ -50,6 +51,16 @@ header.header {
           color: #38bdf8;
           font-weight: 600;
           background-color: rgba(56, 189, 248, 0.1);
+        }
+
+        &.btn-primary {
+          background-color: #0284c7;
+          color: #ffffff;
+
+          &:hover {
+            background-color: #0369a1;
+            color: #ffffff;
+          }
         }
       }
     }

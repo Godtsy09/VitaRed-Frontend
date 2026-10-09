@@ -43,7 +43,12 @@
             name="fecha"
             [min]="minDate()"
             [disabled]="loading()"
+            (change)="onDateChange()"
+            (ngModelChange)="clearFieldError('fecha')"
           />
+          @if (fieldErrors()['fecha']) {
+            <small class="field-error" role="alert">{{ fieldErrors()['fecha'] }}</small>
+          }
         </div>
 
         <!-- Hora de la Cita (Horas exactas para cumplir con DB constraint) -->
@@ -55,13 +60,19 @@
             [(ngModel)]="hora"
             name="hora"
             [disabled]="loading() || availableHours().length === 0"
+            (ngModelChange)="clearFieldError('hora')"
           >
             <option value="" disabled selected>Selecciona hora</option>
             @for (h of availableHours(); track h) {
               <option [value]="h">{{ formatTimeDisplay(h) }}</option>
             }
           </select>
-          @if (availableHours().length === 0) {
+          @if (fieldErrors()['hora']) {
+            <small class="field-error" role="alert">{{ fieldErrors()['hora'] }}</small>
+          }
+          @if (!fecha) {
+            <span class="field-hint">Selecciona una fecha para ver los horarios</span>
+          } @else if (availableHours().length === 0) {
             <span class="field-hint">No hay horarios disponibles para este médico</span>
           }
         </div>
@@ -78,14 +89,18 @@
             [(ngModel)]="motivo"
             name="motivo"
             [disabled]="loading()"
+            (ngModelChange)="clearFieldError('motivo')"
           ></textarea>
+          @if (fieldErrors()['motivo']) {
+            <small class="field-error" role="alert">{{ fieldErrors()['motivo'] }}</small>
+          }
           <span class="field-hint">Máximo 255 caracteres ({{ motivo.length }}/255)</span>
         </div>
 
         <!-- Acciones del Formulario -->
         <div class="form-actions">
           <button type="button" class="btn-cancel" (click)="onCancel()" [disabled]="loading()">Cancelar</button>
-          <button type="submit" class="btn-confirm" [disabled]="loading() || !isFormValid()">
+          <button type="submit" class="btn-confirm" [disabled]="loading()">
             @if (loading()) {
               <span class="spinner"></span> Agendando...
             } @else {

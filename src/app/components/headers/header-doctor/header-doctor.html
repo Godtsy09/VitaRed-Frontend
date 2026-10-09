@@ -7,7 +7,6 @@
     <div class="header-right">
       <nav class="nav" aria-label="Navegación de Doctor">
         <a routerLink="/scheduledAppointments" routerLinkActive="active" class="nav-link">Citas Programadas</a>
-        <a routerLink="/profile" routerLinkActive="active" class="nav-link">Mi Perfil</a>
       </nav>
 
       <div class="profile">
@@ -18,16 +17,18 @@
             class="avatar"
             type="button"
             aria-label="Menú de doctor"
-            (click)="$event.stopPropagation()"
+            (click)="toggleMenu($event)"
           >
             {{ getInitials() }}
           </button>
 
           <!-- Menú Desplegable (Visual) -->
-          <div class="avatar-dropdown" role="menu">
-            <button class="avatar-dropdown-item" type="button" role="menuitem" routerLink="/profile">Ver mi perfil</button>
-            <button class="avatar-dropdown-item danger" type="button" role="menuitem" (click)="onLogout()">Cerrar sesión</button>
-          </div>
+          @if (menuOpen()) {
+            <div class="avatar-dropdown" role="menu">
+              <button class="avatar-dropdown-item" type="button" role="menuitem" routerLink="/profile" (click)="closeMenu()">Ver mi perfil</button>
+              <button class="avatar-dropdown-item danger" type="button" role="menuitem" (click)="onLogout()">Cerrar sesión</button>
+            </div>
+          }
         </div>
       </div>
     </div>

@@ -18,16 +18,17 @@
           class="avatar"
           type="button"
           aria-label="Menú de usuario"
-          (click)="$event.stopPropagation()"
+          (click)="toggleMenu($event)"
         >
           {{ getInitials() }}
         </button>
 
         <!-- Menú Desplegable (Visual) -->
-        <div class="avatar-dropdown" role="menu">
-          <button class="avatar-dropdown-item" type="button" role="menuitem" routerLink="/availableDoctors">Volver a búsqueda</button>
-          <button class="avatar-dropdown-item danger" type="button" role="menuitem" (click)="onLogout()">Cerrar sesión</button>
-        </div>
+        @if (menuOpen()) {
+          <div class="avatar-dropdown" role="menu">
+            <button class="avatar-dropdown-item danger" type="button" role="menuitem" (click)="onLogout()">Cerrar sesión</button>
+          </div>
+        }
       </div>
     </div>
   </div>

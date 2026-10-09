@@ -7,6 +7,7 @@ import { DoctorService } from '@core/services/doctor.service';
 import { AppointmentService } from '@core/services/appointment.service';
 import { Doctor, Specialty, Location } from '@core/models';
 import { ToastService } from '@core/services/toast.service';
+import { getInitials } from '@core/utils/initials';
 
 @Component({
   imports: [HeaderUser, FormsModule],
@@ -138,17 +139,12 @@ export class AvailableDoctors implements OnInit {
   }
 
   protected getDoctorInitials(doctor: Doctor): string {
-    const name = doctor.usuario?.nombre ?? '';
-    return name
-      .split(' ')
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((p) => p.charAt(0).toUpperCase())
-      .join('');
+    return getInitials(doctor.usuario?.nombre, doctor.usuario?.apellido);
   }
 
-  protected formatPrice(price: number | null): string {
-    return price ? `Q ${price.toFixed(2)}` : 'No definida';
+  protected formatPrice(price: number | string | null): string {
+    const value = typeof price === 'string' ? Number(price) : price;
+    return value !== null && !Number.isNaN(value) ? `Q ${value.toFixed(2)}` : 'No definida';
   }
 
   protected getWhatsappLink(doctor: Doctor): string {

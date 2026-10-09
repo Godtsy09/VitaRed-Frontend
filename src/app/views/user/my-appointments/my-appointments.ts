@@ -1,12 +1,14 @@
 import { Component, inject, OnInit, PLATFORM_ID, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { HeaderUser } from '@components/headers/header-user/header-user';
 import { AppointmentService } from '@core/services/appointment.service';
 import { Appointment, Doctor } from '@core/models';
 import { ToastService } from '@core/services/toast.service';
+import { getInitials } from '@core/utils/initials';
 
 @Component({
-  imports: [HeaderUser],
+  imports: [HeaderUser, RouterLink],
   selector: 'app-my-appointments',
   styleUrl: './my-appointments.scss',
   templateUrl: './my-appointments.html',
@@ -86,12 +88,6 @@ export class MyAppointments implements OnInit {
   }
 
   protected getDoctorInitials(doctor?: Doctor): string {
-    const name = doctor?.usuario?.nombre ?? '';
-    return name
-      .split(' ')
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((p) => p.charAt(0).toUpperCase())
-      .join('');
+    return getInitials(doctor?.usuario?.nombre, doctor?.usuario?.apellido);
   }
 }
